@@ -68,7 +68,7 @@
               <addClasspath>true</addClasspath>
               <classpathPrefix>libs/</classpathPrefix>
               <mainClass>
-                io.papermc.hangar.scanner.Main
+                dev.ratas.hangarjarscannerrunner.Main
               </mainClass>
             </manifest>
           </archive>
