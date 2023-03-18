@@ -24,7 +24,7 @@ while [ "${1}" != "" ]
 do
 	case "${1}" in
 	--help )
-		java -jar ${HJSR_JARFILE} --help
+		usage
 		exit 0
 		;;
 	--jar )
