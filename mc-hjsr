@@ -1,0 +1,79 @@
+#!/bin/bash
+# $Id: mc-hjsr,v 1.2 2023/03/03 22:42:34 ram Exp $
+#
+# Use with HangarJarScanner @ https://github.com/HangarMC/HangarJarScanner
+#
+
+function usage()
+{
+	echo "usage: ${0} [--help] [--jar HJSR_JARFILE] jars..."
+	exit 1
+}
+
+HJSR_LOGFILE="/dev/null"
+HJSR_FLAGS=""
+
+JARFILES=""
+VERBOSE=0
+
+HJSR_JARFILE=`ls HangarJarScannerRunner* | tail -1`
+# echo HJSR_JARFILE=${HJSR_JARFILE} ; exit 0
+
+# Where are those Spigot jar files?
+while [ "${1}" != "" ]
+do
+	case "${1}" in
+	--help )
+		java -jar ${HJSR_JARFILE} --help
+		exit 0
+		;;
+	--jar )
+		HJSR_JARFILE=${2}
+		shift
+		;;
+	--verbose )
+		(( ++VERBOSE ))
+		;;
+	* )
+		if [ "x${JARFILES}" == "x" ]
+		then
+			JARFILES="${1}"
+		else
+			JARFILES="${JARFILES} ${1}"
+		fi
+		;;
+	esac
+	shift
+done
+
+if [ "x${JARFILES}" == "x" ]
+then
+	JARFILES="./plugins/*.jar"
+fi
+
+# echo HJSR_JARFILE=${HJSR_JARFILE} ; exit 0
+# echo JARFILES=${JARFILES} ; exit 0
+
+# Trap signals and remove TEMPFILE.
+trap "rm -f /tmp/antiMalware*.db ; exit 0" SIGHUP SIGINT SIGTERM
+
+# Loop through all the jar files.
+for J in ${JARFILES}
+do
+	# Visual output that we're doing something.
+	echo "======================================== ${J}"
+
+	# Check the .jar file, and append results to the .log file
+	if [ ${VERBOSE} -gt 0 ]
+	then
+		java -jar ${HJSR_JARFILE} ${HJSR_FLAGS} ${J}
+		continue
+	fi
+		java -jar ${HJSR_JARFILE} ${HJSR_FLAGS} ${J} | grep -v \
+			-e 'severity=LOW' \
+			-e 'Checking ' \
+			-e 'ScanResult.platform=PAPER' \
+			-e 'ScanResult.platform=WATERFALL' \
+			-e 'ScanResult.platform=VELOCITY' \
+
+done
