@@ -19,7 +19,7 @@ VERBOSE=0
 HJSR_JARFILE=`ls HangarJarScannerRunner* | tail -1`
 # echo HJSR_JARFILE=${HJSR_JARFILE} ; exit 0
 
-# Where are those Spigot jar files?
+# Where are those jar files?
 while [ "${1}" != "" ]
 do
 	case "${1}" in
